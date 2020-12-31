@@ -1,0 +1,28 @@
+﻿(function (runLive) {
+    var thisHost = window.location.hostname;
+    var thisURL = window.location.pathname;
+    if (runLive.filter(x => x < 0).length > 0) return false;
+    if (runLive.filter(x => x === 0).length > 0 && !thisHost === "beta.thegioididong.com") return false;
+    if (runLive.filter(x => x === 1).length > 0 && !thisHost === "staging.thegioididong.com") return false;
+    if (runLive.filter(x => x === 2).length > 0 && !thisHost === "www.thegioididong.com") return false;
+    
+    var meschat = document.getElementsByClassName("fb-customerchat").length;
+    
+    if (meschat == 0) {
+
+        var listLiink = [
+            '/dtdd/oppo-a53-2020',
+            '/dtdd/samsung-galaxy-a11',
+            '/dtdd/oppo-reno4',
+            '/dtdd/samsung-galaxy-a51',
+            '/dtdd/iphone-11-pro-max',
+            '/dtdd/realme-5i-4gb',
+            '/dtdd/vivo-y20',
+            '/dtdd/vsmart-live-4-6gb',
+            '/dtdd/xiaomi-redmi-note-9s'
+        ];
+        if (listLiink.filter(x => thisURL === x).length > 0) {
+            document.getElementsByTagName("body")[0].innerHTML += '<div class="fb-customerchat" attribution="setup_tool" page_id="124707154243128" logged_in_greeting="Chào bạn, bạn cần hỗ trợ gì không ạ?" logged_out_greeting="Chào bạn, bạn cần hỗ trợ gì không ạ?"> </div>';
+        }
+    }
+})([1,2]);

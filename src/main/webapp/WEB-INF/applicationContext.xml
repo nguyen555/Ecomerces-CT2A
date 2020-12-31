@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans.xsd
+                    http://www.springframework.org/schema/security 
+                    http://www.springframework.org/schema/security/spring-security.xsd
+">
+  <!-- <security:user-service id="userService">
+        <security:user name="user1" authorities="ROLE_USER" password="{noop}12345"/>
+        <security:user name="admin1" authorities="ROLE_ADMIN" password="{noop}abc123"/>
+    </security:user-service> -->
+    
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:jdbc-user-service data-source-ref="dataSource" 
+                users-by-username-query="select userName,CONCAT('{noop}',password) as password, 
+                enabled from users where userName=?" 
+                authorities-by-username-query="select userName,role from users 
+                    where userName =?"/>
+        </security:authentication-provider>    
+    </security:authentication-manager>
+    
+    <security:http pattern="/favicon.ico" security="none"/>
+    
+    <security:http auto-config="true">
+        <security:csrf disabled="true"/>
+        <security:form-login login-page="/login.jsp?login_error=1" 
+                             login-processing-url="/j_spring_security_check"
+                             authentication-success-handler-ref="myAuthenticationSuccessHandler"
+                             username-parameter="userName" password-parameter="password"
+            />
+        <security:intercept-url pattern="/user/*" 
+                                access="hasAnyRole('ROLE_USER,ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/admin/*" 
+                                access="hasRole('ROLE_ADMIN')"/>
+    </security:http>  
+    
+    <bean id="myAuthenticationSuccessHandler"
+  class="redirectLogin.MySimpleUrlAuthenticationSuccessHandler" />
+    
+    <bean id="dataSource" 
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/ecomerce"/>
+        <property name="username" value="root"/>
+        <property name="password" value="admin"/>
+    </bean>   
+           
+</beans>
